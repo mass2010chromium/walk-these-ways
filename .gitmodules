@@ -1,0 +1,3 @@
+[submodule "extern/rl-mpc-locomotion"]
+	path = extern/rl-mpc-locomotion
+	url = https://github.com/Vaibhav-Raheja/rl-mpc-locomotion.git
