@@ -29,7 +29,7 @@ class MultiLogger:
         self.loggers = {}
 
     def add_robot(self, name, cfg):
-        print(name, cfg)
+        #print(name, cfg)
         self.loggers[name] = EpisodeLogger(cfg)
 
     def log(self, name, info):
