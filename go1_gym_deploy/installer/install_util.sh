@@ -13,7 +13,7 @@ sudo cmake --build . --target install
 
 # Build unitree sdk
 echo
-echo "--- Building unitree sdk
+echo "--- Building unitree sdk"
 cd ~/go1_gym/unitree_legged_sdk*
 sh build.sh
 
