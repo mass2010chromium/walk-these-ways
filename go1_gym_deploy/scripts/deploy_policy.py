@@ -3,12 +3,8 @@ import pickle as pkl
 import lcm
 import sys
 
-import omegaconf
-import hydra
-import RL_Environment
-import rsl_rl
-
 from go1_gym_deploy.utils.deployment_runner import DeploymentRunner
+#from go1_gym_deploy.utils.mpc_deployment_runner import MPCDeploymentRunner
 from go1_gym_deploy.envs.lcm_agent import LCMAgent
 from go1_gym_deploy.utils.cheetah_state_estimator import StateEstimator
 from go1_gym_deploy.utils.command_profile import *
@@ -26,6 +22,8 @@ def load_and_run_policy(label, experiment_name, max_vel=1.0, max_yaw_vel=1.0):
         pkl_cfg = pkl.load(file)
         #print(pkl_cfg.keys())
         cfg = pkl_cfg["Cfg"]
+        #print(cfg)
+        #input()
         #print(cfg.keys())
 
     se = StateEstimator(lc)
@@ -44,10 +42,14 @@ def load_and_run_policy(label, experiment_name, max_vel=1.0, max_yaw_vel=1.0):
     # load runner
     root = f"{pathlib.Path(__file__).parent.resolve()}/../../logs/"
     pathlib.Path(root).mkdir(parents=True, exist_ok=True)
-    deployment_runner = DeploymentRunner(experiment_name=experiment_name, se=None,
+
+    deployment_runner = DeploymentRunner(experiment_name=experiment_name, se=se,
                                          log_root=f"{root}/{experiment_name}")
-    deployment_runner.add_control_agent(hardware_agent, "hardware_closed_loop")
     deployment_runner.add_policy(policy)
+    #deployment_runner = MPCDeploymentRunner(experiment_name=experiment_name, se=se,
+    #                                     log_root=f"{root}/{experiment_name}")
+
+    deployment_runner.add_control_agent(hardware_agent, "hardware_closed_loop")
     deployment_runner.add_command_profile(command_profile)
 
     if len(sys.argv) >= 2:

@@ -4,19 +4,32 @@ echo "=========================================="
 echo "== Install development utilities to Go1 =="
 echo "=========================================="
 
-# Install libevent
+# Install libmsgpack (for unitree sdk python bindings)
+echo
+echo "--- Installing libmsgpack"
+cd ~/go1_gym/msgpack-c*
+cmake .
+sudo cmake --build . --target install
+
+# Build unitree sdk
+echo
+echo "--- Building unitree sdk
+cd ~/go1_gym/unitree_legged_sdk*
+sh build.sh
+
+# Install libevent (for tmux)
 echo
 echo "--- Installing libevent"
-cd ../../libevent*
+cd ~/go1_gym/libevent*
 sh autogen.sh
 ./configure
 make -j4
 sudo make install
 
-# Install ncurses
+# Install ncurses (for tmux)
 echo
 echo "--- Installing ncurses"
-cd ../../ncurses*
+cd ~/go1_gym/ncurses*
 ./configure
 make -j4
 sudo make install
@@ -24,7 +37,7 @@ sudo make install
 # Install tmux
 echo
 echo "--- Installing tmux"
-cd ../../tmux*
+cd ~/go1_gym/tmux*
 # Prevent infinite loop with modify times...
 touch Makefile.am
 touch configure.ac

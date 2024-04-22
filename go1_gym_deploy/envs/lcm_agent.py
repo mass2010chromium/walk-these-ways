@@ -213,6 +213,25 @@ class LCMAgent():
 
 
         self.torques = (self.joint_pos_target - self.dof_pos) * self.p_gains + (self.joint_vel_target - self.dof_vel) * self.d_gains
+        print(self.torques)
+
+        lc.publish("pd_plustau_targets", command_for_robot.encode())
+
+    def publish_torques(self, torques, hard_reset=False):
+
+        command_for_robot = pd_tau_targets_lcmt()
+        command_for_robot.q_des = self.dof_pos
+        command_for_robot.qd_des = self.dof_vel
+        command_for_robot.kp = np.zeros(12)
+        command_for_robot.kd = np.zeros(12)
+        command_for_robot.tau_ff = torques
+        command_for_robot.se_contactState = np.zeros(4)
+        command_for_robot.timestamp_us = int(time.time() * 10 ** 6)
+        command_for_robot.id = 0
+
+        if hard_reset:
+            command_for_robot.id = -1
+        self.torques = torques
 
         lc.publish("pd_plustau_targets", command_for_robot.encode())
 
@@ -225,11 +244,14 @@ class LCMAgent():
     def reset_gait_indices(self):
         self.gait_indices = torch.zeros(self.num_envs, dtype=torch.float)
 
-    def step(self, actions, hard_reset=False):
-        clip_actions = self.cfg["normalization"]["clip_actions"]
-        self.last_actions = self.actions[:]
-        self.actions = torch.clip(actions[0:1, :], -clip_actions, clip_actions)
-        self.publish_action(self.actions, hard_reset=hard_reset)
+    def step(self, actions, hard_reset=False, direct_torque=False):
+        if direct_torque:
+            self.publish_torques(actions, hard_reset=hard_reset)
+        else:
+            clip_actions = self.cfg["normalization"]["clip_actions"]
+            self.last_actions = self.actions[:]
+            self.actions = torch.clip(actions[0:1, :], -clip_actions, clip_actions)
+            self.publish_action(self.actions, hard_reset=hard_reset)
         time.sleep(max(self.dt - (time.time() - self.time), 0))
         if self.timestep % 100 == 0: print(f'frq: {1 / (time.time() - self.time)} Hz');
         self.time = time.time()

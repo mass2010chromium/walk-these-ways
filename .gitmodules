@@ -4,3 +4,9 @@
 [submodule "extern/tmux"]
 	path = extern/tmux
 	url = https://github.com/tmux/tmux.git
+[submodule "extern/unitree_legged_sdk"]
+	path = extern/unitree_legged_sdk
+	url = https://github.com/unitreerobotics/unitree_legged_sdk.git
+[submodule "extern/msgpack-c"]
+	path = extern/msgpack-c
+	url = https://github.com/msgpack/msgpack-c.git

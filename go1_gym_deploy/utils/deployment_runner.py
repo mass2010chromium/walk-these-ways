@@ -14,7 +14,7 @@ class DeploymentRunner:
         self.policy = None
         self.command_profile = None
         self.logger = MultiLogger()
-        self.se = se
+        self.state_estimator = se
         self.vision_server = None
 
         self.log_root = log_root
@@ -81,8 +81,8 @@ class DeploymentRunner:
                 print(f"About to calibrate; the robot will stand [Press R2 to calibrate]")
                 while wait:
                     self.button_states = self.command_profile.get_buttons()
-                    if self.command_profile.state_estimator.right_lower_right_switch_pressed:
-                        self.command_profile.state_estimator.right_lower_right_switch_pressed = False
+                    if self.state_estimator.right_lower_right_switch_pressed:
+                        self.state_estimator.right_lower_right_switch_pressed = False
                         break
 
                 cal_action = np.zeros((agent.num_envs, agent.num_actions))
@@ -110,8 +110,8 @@ class DeploymentRunner:
                 print("Starting pose calibrated [Press R2 to start controller]")
                 while True:
                     self.button_states = self.command_profile.get_buttons()
-                    if self.command_profile.state_estimator.right_lower_right_switch_pressed:
-                        self.command_profile.state_estimator.right_lower_right_switch_pressed = False
+                    if self.state_estimator.right_lower_right_switch_pressed:
+                        self.state_estimator.right_lower_right_switch_pressed = False
                         break
 
                 for agent_name in self.agents.keys():
@@ -165,7 +165,7 @@ class DeploymentRunner:
                 prev_button_states = self.button_states[:]
                 self.button_states = self.command_profile.get_buttons()
 
-                if self.command_profile.state_estimator.left_lower_left_switch_pressed:
+                if self.state_estimator.left_lower_left_switch_pressed:
                     if not self.is_currently_probing:
                         print("START LOGGING")
                         self.is_currently_probing = True
@@ -183,7 +183,7 @@ class DeploymentRunner:
                         self.logger.reset()
                         time.sleep(1)
                         control_obs = self.agents[self.control_agent_name].reset()
-                    self.command_profile.state_estimator.left_lower_left_switch_pressed = False
+                    self.state_estimator.left_lower_left_switch_pressed = False
 
                 for button in range(4):
                     if self.command_profile.currently_triggered[button]:
@@ -204,15 +204,15 @@ class DeploymentRunner:
                             time.sleep(1)
                             control_obs = self.agents[self.control_agent_name].reset()
 
-                if self.command_profile.state_estimator.right_lower_right_switch_pressed:
+                if self.state_estimator.right_lower_right_switch_pressed:
                     control_obs = self.calibrate(wait=False)
                     time.sleep(1)
-                    self.command_profile.state_estimator.right_lower_right_switch_pressed = False
+                    self.state_estimator.right_lower_right_switch_pressed = False
                     # self.button_states = self.command_profile.get_buttons()
-                    while not self.command_profile.state_estimator.right_lower_right_switch_pressed:
+                    while not self.state_estimator.right_lower_right_switch_pressed:
                         time.sleep(0.01)
                         # self.button_states = self.command_profile.get_buttons()
-                    self.command_profile.state_estimator.right_lower_right_switch_pressed = False
+                    self.state_estimator.right_lower_right_switch_pressed = False
 
             # finally, return to the nominal pose
             control_obs = self.calibrate(wait=False)

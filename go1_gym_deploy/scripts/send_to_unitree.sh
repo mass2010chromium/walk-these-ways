@@ -7,7 +7,7 @@
 DEPLOY="$PWD/../../go1_gym_deploy $PWD/../../runs $PWD/../setup.py"
 
 EXTERN="$PWD/../../extern"
-LIBS="$EXTERN/rl-mpc-locomotion $EXTERN/hydra $EXTERN/omegaconf $EXTERN/antlr4"
+LIBS="$EXTERN/rl-mpc-locomotion $EXTERN/hydra $EXTERN/omegaconf $EXTERN/antlr4 $EXTERN/unitree_legged_sdk $EXTERN/msgpack-c"
 UTIL="$EXTERN/tmux $EXTERN/libevent-2.1.12-stable $EXTERN/ncurses-6.3"
 rsync -av -e ssh --exclude=*.pt --exclude="*.mp4" --exclude="*.swp" --exclude="*.png" --exclude=".git" --exclude="__pycache__" $DEPLOY $LIBS $UTIL unitree@192.168.123.15:/home/unitree/go1_gym
 
