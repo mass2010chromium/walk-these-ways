@@ -102,6 +102,7 @@ class LCMAgent():
         self.dof_vel = np.zeros(12)
         self.body_linear_vel = np.zeros(3)
         self.body_angular_vel = np.zeros(3)
+        self.body_accel = np.zeros(3)
         self.joint_pos_target = np.zeros(12)
         self.joint_vel_target = np.zeros(12)
         self.torques = np.zeros(12)
@@ -135,6 +136,7 @@ class LCMAgent():
         self.dof_vel = self.se.get_dof_vel()
         self.body_linear_vel = self.se.get_body_linear_vel()
         self.body_angular_vel = self.se.get_body_angular_vel()
+        self.body_accel = self.se.get_body_accel()
 
         ob = np.concatenate((self.gravity_vector.reshape(1, -1),
                              self.commands * self.commands_scale,
@@ -307,6 +309,7 @@ class LCMAgent():
                  "joint_vel_target": self.joint_vel_target[np.newaxis, :],
                  "body_linear_vel": self.body_linear_vel[np.newaxis, :],
                  "body_angular_vel": self.body_angular_vel[np.newaxis, :],
+                 "body_accel": self.body_accel[np.newaxis, :],
                  "contact_state": self.contact_state[np.newaxis, :],
                  "clock_inputs": self.clock_inputs[np.newaxis, :],
                  "body_linear_vel_cmd": self.commands[:, 0:2],

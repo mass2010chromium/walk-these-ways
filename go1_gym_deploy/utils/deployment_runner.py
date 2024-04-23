@@ -108,7 +108,7 @@ class DeploymentRunner:
                     time.sleep(0.05)
 
                 print("Starting pose calibrated [Press R2 to start controller]")
-                while True:
+                while wait:
                     self.button_states = self.command_profile.get_buttons()
                     if self.state_estimator.right_lower_right_switch_pressed:
                         self.state_estimator.right_lower_right_switch_pressed = False
@@ -184,6 +184,17 @@ class DeploymentRunner:
                         time.sleep(1)
                         control_obs = self.agents[self.control_agent_name].reset()
                     self.state_estimator.left_lower_left_switch_pressed = False
+
+                if self.state_estimator.left_upper_switch_pressed:
+                    self.calibrate(wait=False, low=False)
+                    time.sleep(1)
+                    self.calibrate(wait=False, low=True)
+                    time.sleep(1)
+                    for agent_name in self.agents.keys():
+                        self.agents[agent_name].step(np.zeros(12), direct_torque=True)
+                    self.calibrate(wait=True, low=False)
+                    self.state_estimator.left_upper_switch_pressed = False
+
 
                 for button in range(4):
                     if self.command_profile.currently_triggered[button]:

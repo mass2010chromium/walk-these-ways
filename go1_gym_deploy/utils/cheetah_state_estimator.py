@@ -108,6 +108,7 @@ class StateEstimator:
         self.body_lin_vel = np.zeros(3)
         self.body_ang_vel = np.zeros(3)
         self.smoothing_ratio = 0.2
+        self.body_accel = np.zeros(3)
 
         self.contact_state = np.ones(4)
 
@@ -163,9 +164,12 @@ class StateEstimator:
         return self.body_lin_vel
 
     def get_body_angular_vel(self):
-        self.body_ang_vel = self.smoothing_ratio * np.mean(self.deuler_history / self.dt_history, axis=0) + (
-                    1 - self.smoothing_ratio) * self.body_ang_vel
+        #self.body_ang_vel = self.smoothing_ratio * np.mean(self.deuler_history / self.dt_history, axis=0) + (
+        #            1 - self.smoothing_ratio) * self.body_ang_vel
         return self.body_ang_vel
+
+    def get_body_accel(self):
+        return self.body_accel
 
     def get_gravity_vector(self):
         grav = np.dot(self.R.T, np.array([0, 0, -1]))
@@ -320,9 +324,10 @@ class StateEstimator:
         self.buf_idx += 1
         self.euler_prev = np.array(msg.rpy)
 
-        self.body_quat = msg.quat
+        self.body_quat = np.array(msg.quat)
         # Apparently they estimate this themselves using `deuler_history`.
-        #self.body_ang_vel = msg.omegaBody
+        self.body_ang_vel = np.array(msg.omegaBody)
+        self.body_accel = np.array(msg.aBody)
 
     def _sensor_cb(self, channel, data):
         pass
